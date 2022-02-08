@@ -1,23 +1,31 @@
 /* @flow */
 
-import type VueRouter from '../index'
+// import type VueRouter from '../index'
 import { parsePath, resolvePath } from './path'
 import { resolveQuery } from './query'
 import { fillParams } from './params'
 import { warn } from './warn'
 import { extend } from './misc'
 
-export function normalizeLocation (
-  raw: RawLocation,
-  current: ?Route,
-  append: ?boolean,
-  router: ?VueRouter
-): Location {
-  let next: Location = typeof raw === 'string' ? { path: raw } : raw
-  // named target
+/**
+ * @description 格式化location
+ * @param { RawLocation } raw
+ * @param { ?Route } current
+ * @param { ?Boolean } append
+ * @param { ?VueRouter } router
+ * @returns { Location }
+ */
+export function normalizeLocation(raw, current, append, router) {
+  /**
+   * @param { Location }
+   */
+  let next = typeof raw === 'string' ? { path: raw } : raw
+  // 已经格式化
   if (next._normalized) {
     return next
-  } else if (next.name) {
+  }
+  // 有 name 属性，拷贝 params
+  else if (next.name) {
     next = extend({}, raw)
     const params = next.params
     if (params && typeof params === 'object') {
@@ -27,10 +35,11 @@ export function normalizeLocation (
   }
 
   // relative params
+  // 没有 path，有 params，有 current
   if (!next.path && next.params && current) {
     next = extend({}, next)
     next._normalized = true
-    const params: any = extend(extend({}, current.params), next.params)
+    const params = extend(extend({}, current.params), next.params)
     if (current.name) {
       next.name = current.name
       next.params = params
@@ -64,6 +73,6 @@ export function normalizeLocation (
     _normalized: true,
     path,
     query,
-    hash
+    hash,
   }
 }

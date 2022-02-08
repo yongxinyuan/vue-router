@@ -14,33 +14,40 @@ import { HashHistory } from './history/hash'
 import { HTML5History } from './history/html5'
 import { AbstractHistory } from './history/abstract'
 
-import type { Matcher } from './create-matcher'
+// import type { Matcher } from './create-matcher'
 
 import { isNavigationFailure, NavigationFailureType } from './util/errors'
 
 export default class VueRouter {
-  static install: () => void
-  static version: string
-  static isNavigationFailure: Function
-  static NavigationFailureType: any
-  static START_LOCATION: Route
+  // static install: () => void
+  // static version: string
+  // static isNavigationFailure: Function
+  // static NavigationFailureType: any
+  // static START_LOCATION: Route
 
-  app: any
-  apps: Array<any>
-  ready: boolean
-  readyCbs: Array<Function>
-  options: RouterOptions
-  mode: string
-  history: HashHistory | HTML5History | AbstractHistory
-  matcher: Matcher
-  fallback: boolean
-  beforeHooks: Array<?NavigationGuard>
-  resolveHooks: Array<?NavigationGuard>
-  afterHooks: Array<?AfterNavigationHook>
+  // app: any
+  // apps: Array<any>
+  // ready: boolean
+  // readyCbs: Array<Function>
+  // options: RouterOptions
+  // mode: string
+  // history: HashHistory | HTML5History | AbstractHistory
+  // matcher: Matcher
+  // fallback: boolean
+  // beforeHooks: Array<?NavigationGuard>
+  // resolveHooks: Array<?NavigationGuard>
+  // afterHooks: Array<?AfterNavigationHook>
 
-  constructor (options: RouterOptions = {}) {
+  /**
+   *
+   * @param { RouterOptions } options
+   */
+  constructor(options = {}) {
     if (process.env.NODE_ENV !== 'production') {
-      warn(this instanceof VueRouter, `Router must be called with the new operator.`)
+      warn(
+        this instanceof VueRouter,
+        `Router must be called with the new operator.`
+      )
     }
     this.app = null
     this.apps = []
@@ -50,7 +57,9 @@ export default class VueRouter {
     this.afterHooks = []
     this.matcher = createMatcher(options.routes || [], this)
 
+    // 模式
     let mode = options.mode || 'hash'
+    //
     this.fallback =
       mode === 'history' && !supportsPushState && options.fallback !== false
     if (this.fallback) {
@@ -78,15 +87,27 @@ export default class VueRouter {
     }
   }
 
-  match (raw: RawLocation, current?: Route, redirectedFrom?: Location): Route {
+  /**
+   * @description
+   * @param { RawLocation } raw
+   * @param { ?Route } current
+   * @param { ?Location } redirectedFrom
+   * @returns { Route }
+   */
+  match(raw, current, redirectedFrom) {
     return this.matcher.match(raw, current, redirectedFrom)
   }
 
-  get currentRoute (): ?Route {
+  get currentRoute(): ?Route {
     return this.history && this.history.current
   }
 
-  init (app: any /* Vue component instance */) {
+  /**
+   * @description Vue beforeCreate 执行，处理实例相关
+   * @param { vm } app
+   * @returns
+   */
+  init(app) {
     process.env.NODE_ENV !== 'production' &&
       assert(
         install.installed,
@@ -94,8 +115,10 @@ export default class VueRouter {
           `before creating root instance.`
       )
 
+    // 收集 vm
     this.apps.push(app)
 
+    // Vue 实例销毁
     // set up app destroyed handler
     // https://github.com/vuejs/vue-router/issues/2639
     app.$once('hook:destroyed', () => {
@@ -115,12 +138,13 @@ export default class VueRouter {
       return
     }
 
+    // 缓存当前app
     this.app = app
 
     const history = this.history
 
     if (history instanceof HTML5History || history instanceof HashHistory) {
-      const handleInitialScroll = routeOrError => {
+      const handleInitialScroll = (routeOrError) => {
         const from = history.current
         const expectScroll = this.options.scrollBehavior
         const supportsScroll = supportsPushState && expectScroll
@@ -129,7 +153,7 @@ export default class VueRouter {
           handleScroll(this, routeOrError, from, false)
         }
       }
-      const setupListeners = routeOrError => {
+      const setupListeners = (routeOrError) => {
         history.setupListeners()
         handleInitialScroll(routeOrError)
       }
@@ -140,35 +164,57 @@ export default class VueRouter {
       )
     }
 
-    history.listen(route => {
-      this.apps.forEach(app => {
+    // 修改所有app._route
+    history.listen((route) => {
+      this.apps.forEach((app) => {
         app._route = route
       })
     })
   }
 
-  beforeEach (fn: Function): Function {
+  /**
+   * @description 路由守卫 beforeEach
+   * @param { Function } fn
+   * @returns { Function }
+   */
+  beforeEach(fn) {
     return registerHook(this.beforeHooks, fn)
   }
 
-  beforeResolve (fn: Function): Function {
+  /**
+   * @description 路由守卫 beforeResolve
+   * @param { Function } fn
+   * @returns { Function }
+   */
+  beforeResolve(fn) {
     return registerHook(this.resolveHooks, fn)
   }
 
-  afterEach (fn: Function): Function {
+  /**
+   * @description 路由守卫 afterEach
+   * @param { Function } fn
+   * @returns { Function }
+   */
+  afterEach(fn) {
     return registerHook(this.afterHooks, fn)
   }
 
-  onReady (cb: Function, errorCb?: Function) {
+  onReady(cb: Function, errorCb?: Function) {
     this.history.onReady(cb, errorCb)
   }
 
-  onError (errorCb: Function) {
+  onError(errorCb: Function) {
     this.history.onError(errorCb)
   }
 
-  push (location: RawLocation, onComplete?: Function, onAbort?: Function) {
-    // $flow-disable-line
+  /**
+   * @description 跳转指定路由，添加记录
+   * @param { RawLocation } location
+   * @param { ?Function } onComplete
+   * @param { ?Function } onAbort
+   * @returns
+   */
+  push(location, onComplete, onAbort) {
     if (!onComplete && !onAbort && typeof Promise !== 'undefined') {
       return new Promise((resolve, reject) => {
         this.history.push(location, resolve, reject)
@@ -178,7 +224,7 @@ export default class VueRouter {
     }
   }
 
-  replace (location: RawLocation, onComplete?: Function, onAbort?: Function) {
+  replace(location: RawLocation, onComplete?: Function, onAbort?: Function) {
     // $flow-disable-line
     if (!onComplete && !onAbort && typeof Promise !== 'undefined') {
       return new Promise((resolve, reject) => {
@@ -189,19 +235,29 @@ export default class VueRouter {
     }
   }
 
-  go (n: number) {
+  /**
+   * @description 路由向前跳转
+   * @param { Number } n
+   */
+  go(n) {
     this.history.go(n)
   }
 
-  back () {
+  /**
+   * @description 后退一步
+   */
+  back() {
     this.go(-1)
   }
 
-  forward () {
+  /**
+   * @description 前进一步
+   */
+  forward() {
     this.go(1)
   }
 
-  getMatchedComponents (to?: RawLocation | Route): Array<any> {
+  getMatchedComponents(to?: RawLocation | Route): Array<any> {
     const route: any = to
       ? to.matched
         ? to
@@ -212,15 +268,15 @@ export default class VueRouter {
     }
     return [].concat.apply(
       [],
-      route.matched.map(m => {
-        return Object.keys(m.components).map(key => {
+      route.matched.map((m) => {
+        return Object.keys(m.components).map((key) => {
           return m.components[key]
         })
       })
     )
   }
 
-  resolve (
+  resolve(
     to: RawLocation,
     current?: Route,
     append?: boolean
@@ -230,7 +286,7 @@ export default class VueRouter {
     href: string,
     // for backwards compat
     normalizedTo: Location,
-    resolved: Route
+    resolved: Route,
   } {
     current = current || this.history.current
     const location = normalizeLocation(to, current, append, this)
@@ -244,24 +300,31 @@ export default class VueRouter {
       href,
       // for backwards compat
       normalizedTo: location,
-      resolved: route
+      resolved: route,
     }
   }
 
-  getRoutes () {
+  getRoutes() {
     return this.matcher.getRoutes()
   }
 
-  addRoute (parentOrRoute: string | RouteConfig, route?: RouteConfig) {
+  addRoute(parentOrRoute: string | RouteConfig, route?: RouteConfig) {
     this.matcher.addRoute(parentOrRoute, route)
     if (this.history.current !== START) {
       this.history.transitionTo(this.history.getCurrentLocation())
     }
   }
 
-  addRoutes (routes: Array<RouteConfig>) {
+  /**
+   * @description 批量添加路由
+   * @param { Array<RouteConfig> } routes
+   */
+  addRoutes(routes) {
     if (process.env.NODE_ENV !== 'production') {
-      warn(false, 'router.addRoutes() is deprecated and has been removed in Vue Router 4. Use router.addRoute() instead.')
+      warn(
+        false,
+        'router.addRoutes() is deprecated and has been removed in Vue Router 4. Use router.addRoute() instead.'
+      )
     }
     this.matcher.addRoutes(routes)
     if (this.history.current !== START) {
@@ -270,7 +333,13 @@ export default class VueRouter {
   }
 }
 
-function registerHook (list: Array<any>, fn: Function): Function {
+/**
+ * @description  注册hook
+ * @param { Array<any> } list
+ * @param { Function } fn
+ * @returns { Function }
+ */
+function registerHook(list, fn) {
   list.push(fn)
   return () => {
     const i = list.indexOf(fn)
@@ -278,7 +347,7 @@ function registerHook (list: Array<any>, fn: Function): Function {
   }
 }
 
-function createHref (base: string, fullPath: string, mode) {
+function createHref(base: string, fullPath: string, mode) {
   var path = mode === 'hash' ? '#' + fullPath : fullPath
   return base ? cleanPath(base + '/' + path) : path
 }
