@@ -11,7 +11,7 @@ export default {
       default: 'default'
     }
   },
-  render (_, { props, children, parent, data }) {
+  render(_, { props, children, parent, data }) {
     // used by devtools to display a router-view badge
     data.routerView = true
 
@@ -80,11 +80,11 @@ export default {
       }
     }
 
-    // also register instance in prepatch hook
-    // in case the same component instance is reused across different routes
-    ;(data.hook || (data.hook = {})).prepatch = (_, vnode) => {
-      matched.instances[name] = vnode.componentInstance
-    }
+      // also register instance in prepatch hook
+      // in case the same component instance is reused across different routes
+      ; (data.hook || (data.hook = {})).prepatch = (_, vnode) => {
+        matched.instances[name] = vnode.componentInstance
+      }
 
     // register instance in init hook
     // in case kept-alive component be actived when routes changed
@@ -116,7 +116,7 @@ export default {
   }
 }
 
-function fillPropsinData (component, data, route, configProps) {
+function fillPropsinData(component, data, route, configProps) {
   // resolve props
   let propsToPass = data.props = resolveProps(route, configProps)
   if (propsToPass) {
@@ -133,7 +133,7 @@ function fillPropsinData (component, data, route, configProps) {
   }
 }
 
-function resolveProps (route, config) {
+function resolveProps(route, config) {
   switch (typeof config) {
     case 'undefined':
       return

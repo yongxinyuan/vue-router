@@ -1,5 +1,3 @@
-/* @flow */
-
 import { install } from './install'
 import { START } from './util/route'
 import { assert, warn } from './util/warn'
@@ -57,9 +55,8 @@ export default class VueRouter {
     this.afterHooks = []
     this.matcher = createMatcher(options.routes || [], this)
 
-    // 模式
+    // 模式策略
     let mode = options.mode || 'hash'
-    //
     this.fallback =
       mode === 'history' && !supportsPushState && options.fallback !== false
     if (this.fallback) {
@@ -70,6 +67,7 @@ export default class VueRouter {
     }
     this.mode = mode
 
+    // 创建History实例
     switch (mode) {
       case 'history':
         this.history = new HTML5History(this, options.base)
@@ -112,7 +110,7 @@ export default class VueRouter {
       assert(
         install.installed,
         `not installed. Make sure to call \`Vue.use(VueRouter)\` ` +
-          `before creating root instance.`
+        `before creating root instance.`
       )
 
     // 收集 vm

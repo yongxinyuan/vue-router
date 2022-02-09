@@ -9,7 +9,7 @@ import { warn } from '../util/warn'
 const toTypes: Array<Function> = [String, Object]
 const eventTypes: Array<Function> = [String, Array]
 
-const noop = () => {}
+const noop = () => { }
 
 let warnedCustomSlot
 let warnedTagProp
@@ -42,7 +42,7 @@ export default {
       default: 'click'
     }
   },
-  render (h: Function) {
+  render(h: Function) {
     const router = this.$router
     const current = this.$route
     const { location, route, href } = router.resolve(
@@ -122,8 +122,7 @@ export default {
         if (process.env.NODE_ENV !== 'production') {
           warn(
             false,
-            `<router-link> with to="${
-              this.to
+            `<router-link> with to="${this.to
             }" is trying to use a scoped slot but it didn't provide exactly one child. Wrapping the content with a span element.`
           )
         }
@@ -189,7 +188,7 @@ export default {
   }
 }
 
-function guardEvent (e) {
+function guardEvent(e) {
   // don't redirect with control keys
   if (e.metaKey || e.altKey || e.ctrlKey || e.shiftKey) return
   // don't redirect when preventDefault called
@@ -208,7 +207,7 @@ function guardEvent (e) {
   return true
 }
 
-function findAnchor (children) {
+function findAnchor(children) {
   if (children) {
     let child
     for (let i = 0; i < children.length; i++) {

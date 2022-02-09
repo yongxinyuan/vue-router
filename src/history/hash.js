@@ -9,7 +9,7 @@ export class HashHistory extends History {
   /**
    * @param { Router } router
    * @param { ?String } base
-   * @param { Boolean } fallback
+   * @param { ?Boolean } fallback
    * @returns
    */
   constructor(router, base, fallback) {
@@ -40,6 +40,7 @@ export class HashHistory extends History {
       this.listeners.push(setupScroll())
     }
 
+    // 监听 hash 变化回调函数
     const handleRoutingEvent = () => {
       const current = this.current
       if (!ensureSlash()) {

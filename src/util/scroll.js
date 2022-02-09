@@ -7,7 +7,7 @@ import { extend } from './misc'
 
 const positionStore = Object.create(null)
 
-export function setupScroll () {
+export function setupScroll() {
   // Prevent browser scroll behavior on History popstate
   if ('scrollRestoration' in window.history) {
     window.history.scrollRestoration = 'manual'
@@ -29,12 +29,15 @@ export function setupScroll () {
   }
 }
 
-export function handleScroll (
-  router: Router,
-  to: Route,
-  from: Route,
-  isPop: boolean
-) {
+/**
+ * @description 
+ * @param { Router } router 
+ * @param { Route } to 
+ * @param { Route } from 
+ * @param { Boolean } isPop 
+ * @returns 
+ */
+export function handleScroll(router, to, from, isPop) {
   if (!router.app) {
     return
   }
@@ -78,7 +81,7 @@ export function handleScroll (
   })
 }
 
-export function saveScrollPosition () {
+export function saveScrollPosition() {
   const key = getStateKey()
   if (key) {
     positionStore[key] = {
@@ -88,21 +91,21 @@ export function saveScrollPosition () {
   }
 }
 
-function handlePopState (e) {
+function handlePopState(e) {
   saveScrollPosition()
   if (e.state && e.state.key) {
     setStateKey(e.state.key)
   }
 }
 
-function getScrollPosition (): ?Object {
+function getScrollPosition(): ?Object {
   const key = getStateKey()
   if (key) {
     return positionStore[key]
   }
 }
 
-function getElementPosition (el: Element, offset: Object): Object {
+function getElementPosition(el: Element, offset: Object): Object {
   const docEl: any = document.documentElement
   const docRect = docEl.getBoundingClientRect()
   const elRect = el.getBoundingClientRect()
@@ -112,31 +115,31 @@ function getElementPosition (el: Element, offset: Object): Object {
   }
 }
 
-function isValidPosition (obj: Object): boolean {
+function isValidPosition(obj: Object): boolean {
   return isNumber(obj.x) || isNumber(obj.y)
 }
 
-function normalizePosition (obj: Object): Object {
+function normalizePosition(obj: Object): Object {
   return {
     x: isNumber(obj.x) ? obj.x : window.pageXOffset,
     y: isNumber(obj.y) ? obj.y : window.pageYOffset
   }
 }
 
-function normalizeOffset (obj: Object): Object {
+function normalizeOffset(obj: Object): Object {
   return {
     x: isNumber(obj.x) ? obj.x : 0,
     y: isNumber(obj.y) ? obj.y : 0
   }
 }
 
-function isNumber (v: any): boolean {
+function isNumber(v: any): boolean {
   return typeof v === 'number'
 }
 
 const hashStartsWithNumberRE = /^#\d/
 
-function scrollToPosition (shouldScroll, position) {
+function scrollToPosition(shouldScroll, position) {
   const isObject = typeof shouldScroll === 'object'
   if (isObject && typeof shouldScroll.selector === 'string') {
     // getElementById would still fail if the selector contains a more complicated query like #main[data-attr]

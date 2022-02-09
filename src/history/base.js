@@ -228,6 +228,7 @@ export class History {
     )
 
     /**
+     * @description 执行队列的迭代器
      * @param { NavigationGuard } hook
      * @param {*} next
      * @returns
@@ -357,8 +358,15 @@ function resolveQueue(current, next) {
   }
 }
 
-function extractGuards(
-  records: Array<RouteRecord>,
+/**
+ * @description 提取路由守卫？
+ * @param { Array<RouteRecord> } records 
+ * @param { String } name 
+ * @param { Function } bind 
+ * @param { Boolean } reverse 
+ * @returns 
+ */
+function extractGuards(records,
   name: string,
   bind: Function,
   reverse?: boolean
