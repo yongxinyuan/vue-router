@@ -215,15 +215,15 @@ export class History {
      * @param { Array<?NavigationGuard> }
      */
     const queue = [].concat(
-      // in-component leave guards
+      // 组件内的离开路由守卫
       extractLeaveGuards(deactivated),
-      // global before hooks
+      // 全局的 before 钩子
       this.router.beforeHooks,
-      // in-component update hooks
+      // 组件内 update 钩子
       extractUpdateHooks(updated),
-      // in-config enter guards
+      // 配置的 enter 钩子
       activated.map((m) => m.beforeEnter),
-      // async components
+      // 异步组件
       resolveAsyncComponents(activated)
     )
 
@@ -346,6 +346,10 @@ function normalizeBase(base) {
 function resolveQueue(current, next) {
   let i
   const max = Math.max(current.length, next.length)
+  // 查找第一个不同元素的索引，进行拆分
+  // 相同部分更新
+  // 第一个不同的是当前激活的
+  // current 中其他不同的是失活的
   for (i = 0; i < max; i++) {
     if (current[i] !== next[i]) {
       break
@@ -360,13 +364,14 @@ function resolveQueue(current, next) {
 
 /**
  * @description 提取路由守卫？
- * @param { Array<RouteRecord> } records 
- * @param { String } name 
- * @param { Function } bind 
- * @param { Boolean } reverse 
- * @returns 
+ * @param { Array<RouteRecord> } records
+ * @param { String } name
+ * @param { Function } bind
+ * @param { Boolean } reverse
+ * @returns
  */
-function extractGuards(records,
+function extractGuards(
+  records,
   name: string,
   bind: Function,
   reverse?: boolean

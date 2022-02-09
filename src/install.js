@@ -40,6 +40,7 @@ export function install(Vue) {
         // 执行 router.init
         this._router.init(this)
         // vm._route = router.history.current
+        // 收集依赖，触发响应式通信
         Vue.util.defineReactive(this, '_route', this._router.history.current)
       } else {
         this._routerRoot = (this.$parent && this.$parent._routerRoot) || this
